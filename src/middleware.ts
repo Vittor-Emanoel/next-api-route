@@ -1,18 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from "next/server";
 
-const isSignedIn = false
+const isSignedIn = true;
 
-export function middleware (request: NextRequest) {
-
-  if(!isSignedIn) {
-
-    return NextResponse.redirect(new URL('/', request.url ))
+export function middleware(request: NextRequest) {
+  if (!isSignedIn) {
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
-  return NextResponse.next()
+  return NextResponse.next();
 }
-
 
 export const config = {
-  matcher: '/contacts/create'
-}
+  matcher: "/contacts/create",
+};

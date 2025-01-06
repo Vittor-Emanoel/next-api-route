@@ -1,24 +1,47 @@
-'use client';
-
 import { ContactForm } from '@/components/ContactForm';
+import { db } from '@/lib/db';
+import { ActionResponse } from '@/types/actionResponse';
 import { ArrowLeftIcon } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { z } from 'zod';
 
-export default function CreateContactPage() {
-  const router = useRouter()
-  async function handleSubmit(data: { name: string; email: string }) {
-    await fetch('/api/contacts?id=323232', {
-      method: 'POST',
-      body: JSON.stringify(data),
-      headers: {
-        'Content-Type': 'application/json'
+const schema = z.object({
+  name: z.string().min(1, 'nome e obrigatorio'),
+  email: z.string().email(),
+});
+
+async function submitAction(formData: FormData): Promise<ActionResponse> {
+  'use server';
+
+
+  const data = Object.fromEntries(formData)
+
+  const parsedData = schema.safeParse(data)
+
+  if(!parsedData.success){
+    return {
+      status: 'error',
+      body: {
+        message: parsedData.error.issues,
       }
-    });
-
-    router.push('/')
-
+    }
   }
+
+  const {name,email} = parsedData.data
+
+  const contact = await db.contact.create({
+    data: {
+      name,
+      email,
+    },
+  });
+
+  return {
+    status: 'success',
+    body: {contact}
+  }
+}
+export default function CreateContactPage() {
 
   return (
     <>
@@ -35,7 +58,7 @@ export default function CreateContactPage() {
         </h1>
       </header>
 
-      <ContactForm onSubmit={handleSubmit} />
+      <ContactForm submitAction={submitAction} />
     </>
   );
 }

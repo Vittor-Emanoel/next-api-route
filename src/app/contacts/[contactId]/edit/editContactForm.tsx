@@ -32,7 +32,7 @@ export default function EditContactForm({contact}: {contact: Contact}){
         </h1>
       </header>
 
-      <ContactForm contact={contact} onSubmit={handleSubmit} />
+      <ContactForm contact={contact} submitAction={handleSubmit} />
     </>
   );
 }

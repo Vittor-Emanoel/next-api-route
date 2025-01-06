@@ -10,9 +10,10 @@ interface CreateContactPageProps {
 }
 
 export default async function CreateContactPage({params}: CreateContactPageProps) {
+  const {contactId} = await params
   const contact = await db.contact.findUnique({
     where: {
-      id: params.contactId
+      id: contactId
     }
   })
 
